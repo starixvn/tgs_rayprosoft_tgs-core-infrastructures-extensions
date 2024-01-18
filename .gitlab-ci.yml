@@ -1,0 +1,28 @@
+include:
+  - project: rayprosoft/tgs-ci-scripts
+    ref: main
+    file: GitLab/Templates/gitlab-job-templates.yml
+
+variables:
+  BuildCacheKey: Infrastructures.Extensions.$CI_PIPELINE_IID
+
+stages:
+  - build
+  - test
+  - publish
+
+build-code:
+  extends: .build-code-template
+
+unit-test:
+  extends: .unit-test-template
+  script:
+    - dotnet test "**/bin/$BuildConfiguration/$Framework/*Test.dll" -l:'junit;LogFilePath=TestResults/TestResults.xml'
+
+push-nuget:
+  extends: .push-nuget-template
+  script:
+    - push_package "TGS.Core.Infrastructures.Extensions"
+  artifacts:
+    paths:
+      - TGS.Core.Infrastructures.Extensions/bin/$BuildConfiguration/*.nupkg
