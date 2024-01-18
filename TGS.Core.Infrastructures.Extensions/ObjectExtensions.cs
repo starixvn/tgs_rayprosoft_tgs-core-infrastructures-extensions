@@ -8,7 +8,7 @@ namespace TGS.Core.Infrastructures.Extensions
     {
         public static string ToJson(this object obj, bool indented = false)
         {
-            return JsonSerializer.Serialize(obj, new() { WriteIndented = indented });
+            return JsonSerializer.Serialize(obj, new JsonSerializerOptions { WriteIndented = indented });
         }
 
         public static TAttribute GetPropertyAttribute<TObject, TAttribute>(this TObject obj, string propertyName) 
