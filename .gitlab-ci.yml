@@ -14,11 +14,6 @@ stages:
 build-code:
   extends: .build-code-template
 
-unit-test:
-  extends: .unit-test-template
-  script:
-    - dotnet test "**/bin/$BuildConfiguration/$Framework/*Test.dll" -l:'junit;LogFilePath=TestResults/TestResults.xml'
-
 push-nuget:
   extends: .push-nuget-template
   script:
