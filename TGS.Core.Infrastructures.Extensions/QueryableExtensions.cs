@@ -5,7 +5,6 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using TGS.Core.Infrastructures.Extensions.Models;
 
 namespace TGS.Core.Infrastructures.Extensions;
@@ -32,7 +31,7 @@ public static class QueryableExtensions
 
         if (request.ShowAll || request.Rows == 0)
         {
-            var allResult = await result!.ToArrayAsync();
+            var allResult = await result!.ToAsyncEnumerable().ToArrayAsync();
             return new PagedResponse<TModel> { Valid = true, TotalCount = allResult.Length, Items = allResult };
         }
 
@@ -96,10 +95,10 @@ public static class QueryableExtensions
 
     public static async Task<PagedArray<T>> ToPagedArrayAsync<T>(this IQueryable<T> query, int page, int pageSize)
     {
-        var totalCount = await query.CountAsync();
+        var totalCount = await query.ToAsyncEnumerable().CountAsync();
         page = page <= 0 ? 0 : page - 1;
         pageSize = pageSize <= 0 ? 10 : pageSize;
-        var items = await query.Skip(page * pageSize).Take(pageSize).ToArrayAsync();
+        var items = await query.Skip(page * pageSize).Take(pageSize).ToAsyncEnumerable().ToArrayAsync();
         return new PagedArray<T>(totalCount, items);
     }
 
